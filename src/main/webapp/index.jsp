@@ -39,6 +39,9 @@
         .err {
             color: red;
         }
+
+
+
     </style>
 </head>
 <body style="text-align:center; background-color: lightblue;margin-top:70px">
@@ -61,77 +64,35 @@
 </form>
 
     <form method="get" action="taskdetail">
-    <h1>Task per day</h1>
         <table id="taskTable">
             <thead>
                 <tr>
                     <th>S.No</th>
                     <th>Task Name</th>
                     <th>Task Description</th>
-                    <th>Complete</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 <c:forEach var="task" items="${Data}">
-                <c:if test="${!task.completeFlag}">
-                    <tr>
-                        <td>${task.id}</td>
-                        <td>${task.task}</td>
-                        <td>${task.description}</td>
-                        <td>
-                         <input type="checkbox" name="completeIdFlag" value="${task.id}"  onchange="this.form.submit()">
-                         <label> complete</label>
-                         </td>
-                          <td>
-                                      <button type="submit" name="deleteId" value="${task.id}" formaction="taskdetail">Delete</button>
-
-                                     <input type="hidden" name="taskId" value="${task.id}">
-                                 </td>
-                    </tr>
-                </c:if>
+                 <tr>
+                     <td>${task.id}</td>
+                     <td>${task.task}</td>
+                     <td>${task.description}</td>
+                     <td>
+                      <input type="checkbox" name="completeIdFlag" value="${task.id}" onchange="this.form.submit()" ${task.completeFlag ? 'checked' : ''} >
+                     <button type="submit" name="deleteId" value="${task.id}" formaction="taskdetail" style="${task.completeFlag ? 'background-color: lightgrey' : 'background-color: blue'};">Delete</button>
+                    </td>
+                 </tr>
                 </c:forEach>
             </tbody>
 
         </table>
-
-<h1>completed task</h1>
-             <table id="taskTable">
-                    <thead>
-                        <tr>
-                            <th>S.No</th>
-                            <th>Task Name</th>
-                            <th>Task Description</th>
-                            <th>Complete</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach var="task" items="${Data}">
-                        <c:if test="${task.completeFlag}">
-                            <tr>
-                                <td>${task.id}</td>
-                                <td>${task.task}</td>
-                                <td>${task.description}</td>
-                                <td>
-                                 <input type="checkbox" name="completeIdFlag" value="${task.id}"  onchange="this.form.submit()">
-                                 <label> complete</label>
-                                 </td>
-                                  <td>
-                                              <button type="submit" name="deleteId" value="${task.id}" formaction="taskdetail">Delete</button>
-
-                                             <input type="hidden" name="taskId" value="${task.id}">
-                                         </td>
-                            </tr>
-                        </c:if>
-                        </c:forEach>
-                    </tbody>
-
-                </table>
     </form>
     <br>
     <form method="post" action="taskdetail">
 <button type="submit" name="action" value="save" >save</button>
 </form>
 </body>
+
 </html>

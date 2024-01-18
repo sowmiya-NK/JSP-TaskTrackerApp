@@ -21,31 +21,31 @@ public class TaskDao {
         connection = Database.getConnection();
     }
 
-    public void addTask(String task, String description,int completeFlag) throws SQLException {
+    public void addTask(String task, String description, int completeFlag) throws SQLException {
         try {
             // Insert new task
             PreparedStatement ps = connection.prepareStatement(INSERT_QUERY);
             ps.setString(1, task);
             ps.setString(2, description);
-            ps.setInt(3,completeFlag);
+            ps.setInt(3, completeFlag);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
         }
 
     }
+
     public void updateTaskStatus(int taskId, int completeFlag) throws SQLException {
         try {
             PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
             ps.setInt(1, completeFlag);
             ps.setInt(2, taskId);
             ps.executeUpdate();
+
         } catch (SQLException e) {
             throw e;
         }
     }
-
-
 
 
     public List<TaskApp> getAllTasks() {
@@ -59,7 +59,7 @@ public class TaskDao {
                 taskApp.setId(resultSet.getInt("id"));
                 taskApp.setTask(resultSet.getString("task"));
                 taskApp.setDescription(resultSet.getString("description"));
-               taskApp.setCompleteFlag(resultSet.getBoolean("completeFlag"));
+                taskApp.setCompleteFlag(resultSet.getBoolean("completeFlag"));
                 taskList.add(taskApp);
             }
 
@@ -80,12 +80,9 @@ public class TaskDao {
 
     }
 
-
-
-        public static int booleanToInt(boolean value) {
-            return value ? 1 : 0;
-        }
-
+    public static int booleanToInt(boolean value) {
+        return value ? 1 : 0;
+    }
 
 
 }

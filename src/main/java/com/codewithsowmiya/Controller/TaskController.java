@@ -8,9 +8,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -32,22 +34,34 @@ public class TaskController extends HttpServlet {
         String task = req.getParameter("task");
         String description = req.getParameter("description");
         String action = req.getParameter("action");
+        HttpSession session = req.getSession();
+
+        if (session.getAttribute("tempArr") == null) {
+            session.setAttribute("tempArr", new ArrayList<TaskApp>());
+        }
+
+        List<TaskApp> tempArr = (List<TaskApp>) session.getAttribute("tempArr");
+
         if ("add".equals(action)) {
             int length = tempArr.size();
             TaskApp taskApp = new TaskApp(length + 1, task, description, false);
             tempArr.add(taskApp);
             System.out.println(tempArr);
             data = tempArr;
+            session.setAttribute("tempArr", tempArr);
         } else if ("save".equals(action)) {
             try {
                 for (TaskApp taskApp1 : tempArr) {
                     taskDao.addTask(taskApp1.getTask(), taskApp1.getDescription(), 0);
                 }
                 data = taskDao.getAllTasks();
+                tempArr = (List<TaskApp>) session.getAttribute("tempArr");
             } catch (SQLException e) {
                 throw new RuntimeException(e);
+            } finally {
+                tempArr = new ArrayList<>();
+                session.setAttribute("tempArr", tempArr);
             }
-
 
         }
         req.setAttribute("Data", data);
@@ -67,7 +81,6 @@ public class TaskController extends HttpServlet {
                 final int deleteId = Integer.parseInt(deleteIdParameter);
                 taskDao.deleteTask(deleteId);
 
-
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
@@ -76,15 +89,17 @@ public class TaskController extends HttpServlet {
         if (completeFlagIdParameter != null) {
             completeFlagClicked = true;
             int status = taskDao.booleanToInt(completeFlagClicked);
-            System.out.println(status);
+
             if (completeFlagClicked) {
                 try {
                     taskDao.updateTaskStatus(Integer.parseInt(completeFlagIdParameter), status);
+                    System.out.println(status + "status");
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
                 System.out.println(completeFlagClicked);
             }
+
         }
 
         List<TaskApp> data = taskDao.getAllTasks();
