@@ -2,7 +2,7 @@ package com.codewithsowmiya.Controller;
 
 import com.codewithsowmiya.Model.TaskApp;
 import com.codewithsowmiya.dao.TaskDao;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,17 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.IntStream;
+import java.util.*;
+
 
 
 public class TaskController extends HttpServlet {
     private final TaskDao taskDao;
-    String error = "";
-    List<TaskApp> tempArr = new ArrayList<>();
+
     List<TaskApp> data = new ArrayList<>();
 
     public TaskController() throws SQLException, ClassNotFoundException {
@@ -72,9 +68,6 @@ public class TaskController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String deleteIdParameter = req.getParameter("deleteId");
         System.out.println(deleteIdParameter + "deleted");
-        String completeFlagIdParameter = req.getParameter("completeIdFlag");
-        System.out.println(completeFlagIdParameter + " completedid");
-
 
         if (deleteIdParameter != null && !deleteIdParameter.isEmpty()) {
             try {
@@ -85,26 +78,36 @@ public class TaskController extends HttpServlet {
                 e.printStackTrace();
             }
         }
-        boolean completeFlagClicked = false;
-        if (completeFlagIdParameter != null) {
-            completeFlagClicked = true;
-            int status = taskDao.booleanToInt(completeFlagClicked);
 
-            if (completeFlagClicked) {
+        String[] ids = req.getParameterValues("completeIdFlag");
+
+        if (ids != null && ids.length>0) {
+            System.out.println(Arrays.asList(ids));
+            try {
+                for (String id : ids) {
+                    taskDao.updateTaskStatus(Integer.parseInt(id), 1);
+                }
+                List<String> allIds = taskDao.getAllIds();
+                allIds.removeAll(Arrays.asList(ids));
+                for(String id: allIds){
+                    taskDao.updateTaskStatus(Integer.parseInt(id), 0);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }else{
+            List<String> allIds = taskDao.getAllIds();
+            for(String id: allIds){
                 try {
-                    taskDao.updateTaskStatus(Integer.parseInt(completeFlagIdParameter), status);
-                    System.out.println(status + "status");
+                    taskDao.updateTaskStatus(Integer.parseInt(id), 0);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
-                System.out.println(completeFlagClicked);
             }
-
         }
 
         List<TaskApp> data = taskDao.getAllTasks();
         req.setAttribute("Data", data);
-        req.setAttribute("completeFlagClicked", completeFlagClicked);
         req.getRequestDispatcher("/index.jsp").forward(req, resp);
     }
 

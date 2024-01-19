@@ -27,7 +27,6 @@
             width: 200px;
         }
         button {
-            background-color: #4169E1;
             border: none;
             color: black;
             padding: 10px;
@@ -80,8 +79,8 @@
                      <td>${task.task}</td>
                      <td>${task.description}</td>
                      <td>
-                      <input type="checkbox" name="completeIdFlag" value="${task.id}" onchange="this.form.submit()" ${task.completeFlag ? 'checked' : ''} >
-                     <button type="submit" name="deleteId" value="${task.id}" formaction="taskdetail" style="${task.completeFlag ? 'background-color: lightgrey' : 'background-color: blue'};">Delete</button>
+                      <input type="checkbox" name="completeIdFlag" value="${task.id}" onchange="this.form.submit()" ${task.completeFlag ? 'checked':''} >
+                     <button type="submit" name="deleteId" value="${task.id}" formaction="taskdetail" ${task.completeFlag? 'disabled':''}>Delete</button>
                     </td>
                  </tr>
                 </c:forEach>

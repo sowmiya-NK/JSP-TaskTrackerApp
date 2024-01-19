@@ -15,6 +15,7 @@ public class TaskDao {
     private final String INSERT_QUERY = "INSERT INTO TASKAPP(task,description,completeFlag) VALUES(?,?,?);";
     private final String UPDATE_QUERY = "UPDATE TASKAPP SET completeFlag = ? WHERE id = ?";
     private final String SELECT_ALL_TASKS = "SELECT * FROM TASKAPP;";
+    private final String SELECT_ALL_IDS = "SELECT id FROM TASKAPP;";
     private final String DELETE_TASK = "DELETE FROM TASKAPP WHERE id=?;";
 
     public TaskDao() throws SQLException {
@@ -85,4 +86,20 @@ public class TaskDao {
     }
 
 
+    public List<String> getAllIds() {
+        List<String> idList = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(SELECT_ALL_IDS);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String values = String.valueOf(resultSet.getInt("id"));
+                idList.add(values);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return idList;
+    }
 }
