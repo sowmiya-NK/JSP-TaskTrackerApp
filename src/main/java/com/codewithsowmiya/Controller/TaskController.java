@@ -4,6 +4,8 @@ import com.codewithsowmiya.Model.TaskApp;
 import com.codewithsowmiya.dao.TaskDao;
 
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,14 +17,22 @@ import java.util.*;
 
 
 
-public class TaskController extends HttpServlet {
+public class TaskController extends HttpServlet implements Servlet {
     private final TaskDao taskDao;
 
     List<TaskApp> data = new ArrayList<>();
+    List<TaskApp> values = new ArrayList<>();
+    List<TaskApp> tempArr=new ArrayList<>();;
+
+
 
     public TaskController() throws SQLException, ClassNotFoundException {
         taskDao = new TaskDao();
         data = taskDao.getAllTasks();
+        values = taskDao.getAllTasks();
+        System.out.println("construcor " + data.size());
+        System.out.println(tempArr.size());
+
     }
 
     @Override
@@ -30,33 +40,25 @@ public class TaskController extends HttpServlet {
         String task = req.getParameter("task");
         String description = req.getParameter("description");
         String action = req.getParameter("action");
-        HttpSession session = req.getSession();
-
-        if (session.getAttribute("tempArr") == null) {
-            session.setAttribute("tempArr", new ArrayList<TaskApp>());
-        }
-
-        List<TaskApp> tempArr = (List<TaskApp>) session.getAttribute("tempArr");
 
         if ("add".equals(action)) {
             int length = tempArr.size();
-            TaskApp taskApp = new TaskApp(length + 1, task, description, false);
+            TaskApp taskApp = new TaskApp(length + 1, task, description, false, true);
             tempArr.add(taskApp);
-            System.out.println(tempArr);
-            data = tempArr;
-            session.setAttribute("tempArr", tempArr);
+            System.out.println("temparr" + tempArr);
+            showData(tempArr.get(tempArr.size()-1));
+//            session.setAttribute("tempArr", tempArr);
         } else if ("save".equals(action)) {
             try {
                 for (TaskApp taskApp1 : tempArr) {
                     taskDao.addTask(taskApp1.getTask(), taskApp1.getDescription(), 0);
                 }
                 data = taskDao.getAllTasks();
-                tempArr = (List<TaskApp>) session.getAttribute("tempArr");
+//                tempArr = (List<TaskApp>) session.getAttribute("tempArr");
+                tempArr=new ArrayList<>();
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
-            } finally {
-                tempArr = new ArrayList<>();
-                session.setAttribute("tempArr", tempArr);
             }
 
         }
@@ -70,19 +72,30 @@ public class TaskController extends HttpServlet {
         System.out.println(deleteIdParameter + "deleted");
 
         if (deleteIdParameter != null && !deleteIdParameter.isEmpty()) {
+            System.out.println("Checking");
             try {
-                final int deleteId = Integer.parseInt(deleteIdParameter);
-                taskDao.deleteTask(deleteId);
+                taskDao.deleteTask(Integer.parseInt(deleteIdParameter));
+                data=taskDao.getAllTasks();
 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
+
+//            Iterator<TaskApp> iterator=tempArr.iterator();
+//            while (iterator.hasNext()){
+//                TaskApp taskApp=iterator.next();
+//                if(taskApp.getId()==Integer.parseInt(deleteIdParameter)){
+//                    iterator.remove();
+//
+//                }
+//            }
         }
 
         String[] ids = req.getParameterValues("completeIdFlag");
 
         if (ids != null && ids.length>0) {
-            System.out.println(Arrays.asList(ids));
+            System.out.println("arrayId " + Arrays.asList(ids));
+
             try {
                 for (String id : ids) {
                     taskDao.updateTaskStatus(Integer.parseInt(id), 1);
@@ -110,5 +123,11 @@ public class TaskController extends HttpServlet {
         req.setAttribute("Data", data);
         req.getRequestDispatcher("/index.jsp").forward(req, resp);
     }
+
+
+    public void showData(TaskApp value){
+        data.add(value);
+    }
+
 
 }

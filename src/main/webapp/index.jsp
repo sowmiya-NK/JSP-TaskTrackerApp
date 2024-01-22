@@ -79,8 +79,9 @@
                      <td>${task.task}</td>
                      <td>${task.description}</td>
                      <td>
+                        <c:if test="${task.flagId eq false}">
                       <input type="checkbox" name="completeIdFlag" value="${task.id}" onchange="this.form.submit()" ${task.completeFlag ? 'checked':''} >
-                     <button type="submit" name="deleteId" value="${task.id}" formaction="taskdetail" ${task.completeFlag? 'disabled':''}>Delete</button>
+                     <button type="submit" name="deleteId" value="${task.id}" ${task.completeFlag? 'disabled':''}>Delete</button></c:if>
                     </td>
                  </tr>
                 </c:forEach>

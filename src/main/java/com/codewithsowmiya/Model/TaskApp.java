@@ -6,12 +6,22 @@ public class TaskApp {
     private String description;
 
     private boolean completeFlag;
+    private boolean flagId;
 
-    public TaskApp(int id, String task, String description, boolean completeFlag) {
+    public boolean getFlagId() {
+        return flagId;
+    }
+
+    public void setFlagId(boolean flagId) {
+        this.flagId = flagId;
+    }
+
+    public TaskApp(int id, String task, String description, boolean completeFlag, boolean flagId) {
         this.id = id;
         this.task = task;
         this.description = description;
         this.completeFlag = completeFlag;
+        this.flagId = flagId;
     }
 
     public TaskApp() {

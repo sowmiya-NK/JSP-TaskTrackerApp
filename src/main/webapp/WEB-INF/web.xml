@@ -18,4 +18,15 @@
     <url-pattern>/taskdetail</url-pattern>
   </servlet-mapping>
 
+
+  <servlet>
+    <servlet-name>Task2</servlet-name>
+    <servlet-class>com.codewithsowmiya.Controller.TaskController</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Task2</servlet-name>
+    <url-pattern/>
+  </servlet-mapping>
+
 </web-app>
