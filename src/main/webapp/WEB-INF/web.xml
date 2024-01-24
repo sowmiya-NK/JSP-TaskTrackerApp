@@ -5,28 +5,28 @@
          xmlns="http://java.sun.com/xml/ns/javaee"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          id="WebApp_ID" version="2.5">
-  <display-name>Archetype created web application</display-name>
+    <display-name>Archetype created web application</display-name>
 
 
-  <servlet>
-    <servlet-name>Task</servlet-name>
-    <servlet-class>com.codewithsowmiya.Controller.TaskController</servlet-class>
-  </servlet>
+    <servlet>
+        <servlet-name>Task</servlet-name>
+        <servlet-class>com.codewithsowmiya.Controller.TaskController</servlet-class>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>Task</servlet-name>
-    <url-pattern>/taskdetail</url-pattern>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Task</servlet-name>
+        <url-pattern>/taskdetail</url-pattern>
+    </servlet-mapping>
 
 
-  <servlet>
-    <servlet-name>Task2</servlet-name>
-    <servlet-class>com.codewithsowmiya.Controller.TaskController</servlet-class>
-  </servlet>
+    <servlet>
+        <servlet-name>Task2</servlet-name>
+        <servlet-class>com.codewithsowmiya.Controller.TaskController</servlet-class>
+    </servlet>
 
-  <servlet-mapping>
-    <servlet-name>Task2</servlet-name>
-    <url-pattern/>
-  </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Task2</servlet-name>
+        <url-pattern/>
+    </servlet-mapping>
 
 </web-app>

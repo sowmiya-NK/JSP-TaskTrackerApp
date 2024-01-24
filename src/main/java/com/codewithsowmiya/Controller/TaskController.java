@@ -16,14 +16,13 @@ import java.sql.SQLException;
 import java.util.*;
 
 
-
 public class TaskController extends HttpServlet implements Servlet {
     private final TaskDao taskDao;
 
     List<TaskApp> data = new ArrayList<>();
     List<TaskApp> values = new ArrayList<>();
-    List<TaskApp> tempArr=new ArrayList<>();;
-
+    List<TaskApp> tempArr = new ArrayList<>();
+    ;
 
 
     public TaskController() throws SQLException, ClassNotFoundException {
@@ -46,16 +45,25 @@ public class TaskController extends HttpServlet implements Servlet {
             TaskApp taskApp = new TaskApp(length + 1, task, description, false, true);
             tempArr.add(taskApp);
             System.out.println("temparr" + tempArr);
-            showData(tempArr.get(tempArr.size()-1));
-//            session.setAttribute("tempArr", tempArr);
+            showData(tempArr.get(tempArr.size() - 1));
+
         } else if ("save".equals(action)) {
             try {
                 for (TaskApp taskApp1 : tempArr) {
                     taskDao.addTask(taskApp1.getTask(), taskApp1.getDescription(), 0);
                 }
                 data = taskDao.getAllTasks();
-//                tempArr = (List<TaskApp>) session.getAttribute("tempArr");
-                tempArr=new ArrayList<>();
+                tempArr = new ArrayList<>();
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        } else if ("clearall".equals(action)) {
+            try {
+                taskDao.deleteAllCompletedTask();
+
+                data = taskDao.getAllTasks();
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -75,44 +83,36 @@ public class TaskController extends HttpServlet implements Servlet {
             System.out.println("Checking");
             try {
                 taskDao.deleteTask(Integer.parseInt(deleteIdParameter));
-                data=taskDao.getAllTasks();
+                data = taskDao.getAllTasks();
 
             } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
 
-//            Iterator<TaskApp> iterator=tempArr.iterator();
-//            while (iterator.hasNext()){
-//                TaskApp taskApp=iterator.next();
-//                if(taskApp.getId()==Integer.parseInt(deleteIdParameter)){
-//                    iterator.remove();
-//
-//                }
-//            }
         }
 
         String[] ids = req.getParameterValues("completeIdFlag");
 
-        if (ids != null && ids.length>0) {
+        if (ids != null && ids.length > 0) {
             System.out.println("arrayId " + Arrays.asList(ids));
 
             try {
                 for (String id : ids) {
-                    taskDao.updateTaskStatus(Integer.parseInt(id), 1);
+                    taskDao.updateTaskStatus(Integer.parseInt(id), true);
                 }
                 List<String> allIds = taskDao.getAllIds();
                 allIds.removeAll(Arrays.asList(ids));
-                for(String id: allIds){
-                    taskDao.updateTaskStatus(Integer.parseInt(id), 0);
+                for (String id : allIds) {
+                    taskDao.updateTaskStatus(Integer.parseInt(id), false);
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        }else{
+        } else {
             List<String> allIds = taskDao.getAllIds();
-            for(String id: allIds){
+            for (String id : allIds) {
                 try {
-                    taskDao.updateTaskStatus(Integer.parseInt(id), 0);
+                    taskDao.updateTaskStatus(Integer.parseInt(id), false);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -125,7 +125,7 @@ public class TaskController extends HttpServlet implements Servlet {
     }
 
 
-    public void showData(TaskApp value){
+    public void showData(TaskApp value) {
         data.add(value);
     }
 

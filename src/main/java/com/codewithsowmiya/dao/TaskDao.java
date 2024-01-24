@@ -18,6 +18,10 @@ public class TaskDao {
     private final String SELECT_ALL_IDS = "SELECT id FROM TASKAPP;";
     private final String DELETE_TASK = "DELETE FROM TASKAPP WHERE id=?;";
 
+    private final String DELETE_COMPLETETASK = "DELETE FROM TASKAPP WHERE completeFlag=1";
+
+
+
     public TaskDao() throws SQLException {
         connection = Database.getConnection();
     }
@@ -29,6 +33,7 @@ public class TaskDao {
             ps.setString(1, task);
             ps.setString(2, description);
             ps.setInt(3, completeFlag);
+
             ps.executeUpdate();
         } catch (SQLException e) {
             throw e;
@@ -36,10 +41,10 @@ public class TaskDao {
 
     }
 
-    public void updateTaskStatus(int taskId, int completeFlag) throws SQLException {
+    public void updateTaskStatus(int taskId, boolean completeFlag) throws SQLException {
         try {
             PreparedStatement ps = connection.prepareStatement(UPDATE_QUERY);
-            ps.setInt(1, completeFlag);
+            ps.setBoolean(1, completeFlag);
             ps.setInt(2, taskId);
             ps.executeUpdate();
 
@@ -81,9 +86,7 @@ public class TaskDao {
 
     }
 
-    public static int booleanToInt(boolean value) {
-        return value ? 1 : 0;
-    }
+
 
 
     public List<String> getAllIds() {
@@ -101,5 +104,10 @@ public class TaskDao {
         }
 
         return idList;
+    }
+
+    public void deleteAllCompletedTask() throws SQLException {
+        PreparedStatement ps= connection.prepareStatement(DELETE_COMPLETETASK);
+        ps.executeUpdate();
     }
 }
